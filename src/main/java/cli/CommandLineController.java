@@ -1,38 +1,64 @@
 package cli;
 
-import converter.ConversionRequest;
+import converter.ConversionResult;
 import converter.ConversionWithOperationFeeAndIofHandler;
 import converter.CurrencyConverter;
 import dependencyinjection.ServiceProvider;
+import type.Either;
 
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
 public class CommandLineController {
 
     private final OutputHandler outputHandler;
     private final InputHandler inputHandler;
-    private Map<ConversionOption, CurrencyConverter> converters;
+    private final Map<ConversionOption, CurrencyConverter> converters;
 
     public CommandLineController(ServiceProvider serviceProvider) {
-        this.outputHandler = serviceProvider.getRequiredServiceByName(OutputHandler.class.getCanonicalName());
+        this.outputHandler = serviceProvider.getRequiredService(OutputHandler.class.getCanonicalName());
         this.inputHandler = serviceProvider.getRequiredService(InputHandler.class);
-        this.converters = serviceProvider.getRequiredServiceByName("ConverterMap");
+        this.converters = serviceProvider.getRequiredService("ConverterMap");
     }
 
-    public void run() {
+    public boolean run() {
 
         outputHandler.displayInitialInformation();
-        inputHandler.readAmountOfBrazilianRealToBeConverted().match(amountOfBrazilianRealToBeConverted -> {
+
+        Either<BigDecimal, Exception> amountOfRealOrException = inputHandler.readAmountOfBrazilianRealToBeConverted(); //.match(amountOfBrazilianRealToBeConverted -> {
+        if (amountOfRealOrException.isLeft()) {
+            outputHandler.displayMessageWithErrorStatus("Valor digitado para conversão é invalido!");
+            return false;
+        }
+
+        BigDecimal amountOfReal = amountOfRealOrException.unsafeGetRight();
+
         outputHandler.showConversionOptions();
         outputHandler.displayArrow();
-        inputHandler.readConversionOption().match(conversionOption -> {
-            CurrencyConverter currencyConverter = converters.get(conversionOption);
-            ConversionWithOperationFeeAndIofHandler converter = new ConversionWithOperationFeeAndIofHandler(currencyConverter);
-            var a = new ConversionRequest(amountOfBrazilianRealToBeConverted, conversionOption);
-            converter.convertCurrency(amountOfBrazilianRealToBeConverted)
-            .ifPresentOrElse(outputHandler::displayConversionResults,
-            () -> outputHandler.displayMessageWithErrorStatus("Quantidade convertida gera um valor negativo. Não fazemos isso aqui!"));
-        }, error -> outputHandler.displayMessageWithErrorStatus("Opção de conversão selecionada é inválida. Por favor, selecione uma das opções válidas!"));
-        }, error -> outputHandler.displayMessageWithErrorStatus("Valor digitado para conversão é invalido!"));
+
+        Either<ConversionOption, Exception> conversionOptionOrException = inputHandler.readConversionOption();
+        if (conversionOptionOrException.isLeft()) {
+            outputHandler.displayMessageWithErrorStatus("Opção de conversão selecionada é inválida. Por favor, selecione uma das opções válidas!");
+            return true;
+        }
+
+        ConversionOption conversionOption = conversionOptionOrException.unsafeGetRight();
+        if (conversionOption == ConversionOption.NONE) {
+            return false;
+        }
+
+        CurrencyConverter currencyConverter = converters.get(conversionOption);
+        ConversionWithOperationFeeAndIofHandler conversionWithOperationFeeAndIofHandler = new ConversionWithOperationFeeAndIofHandler(currencyConverter);
+
+        Optional<ConversionResult> conversionResultOptional = conversionWithOperationFeeAndIofHandler.convertCurrency(amountOfReal);
+
+        if (conversionResultOptional.isEmpty()) {
+            outputHandler.displayMessageWithErrorStatus("Quantidade convertida gera um valor negativo. Não fazemos isso aqui!");
+            return true;
+        }
+
+        outputHandler.displayConversionResults(conversionResultOptional.get());
+        return true;
     }
 }

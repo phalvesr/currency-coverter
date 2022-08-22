@@ -6,8 +6,6 @@ public class App {
         ServiceProvider serviceProvider = new ServiceProvider();
         CommandLineController commandLineController = new CommandLineController(serviceProvider);
 
-        while (true) {
-            commandLineController.run();
-        }
+        while (commandLineController.run());
     }
 }

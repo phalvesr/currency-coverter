@@ -56,7 +56,7 @@ public class ServiceProvider {
     }
 
 
-    public <T> T getRequiredServiceByName(String name) {
+    public <T> T getRequiredService(String name) {
         Object requestedService = serviceCollection.get(name);
 
         if (requestedService == null) {

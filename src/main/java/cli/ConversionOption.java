@@ -1,6 +1,17 @@
 package cli;
 
 public enum ConversionOption {
+    NONE {
+        @Override
+        public String stringValue() {
+            return "None";
+        }
+
+        @Override
+        public int intValue() {
+            return 0;
+        }
+    },
     EURO {
         @Override
         public String stringValue() {
@@ -49,6 +60,6 @@ public enum ConversionOption {
     public abstract String stringValue();
     public abstract int intValue();
     public static ConversionOption mapFromInteger(int value) {
-        return ConversionOption.values()[value - 1];
+        return ConversionOption.values()[value];
     }
 }
