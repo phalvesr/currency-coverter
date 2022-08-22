@@ -1,13 +1,11 @@
 import cli.CommandLineController;
-import dependencyinjection.ServiceProvider;
+import dependencyinjection.ServiceFactory;
 
 public class App {
     public static void main(String[] args) {
-        ServiceProvider serviceProvider = new ServiceProvider();
-        CommandLineController commandLineController = new CommandLineController(serviceProvider);
+        ServiceFactory serviceFactory = new ServiceFactory();
+        CommandLineController commandLineController = new CommandLineController(serviceFactory);
 
-        while (true) {
-            commandLineController.run();
-        }
+        while (commandLineController.run());
     }
 }

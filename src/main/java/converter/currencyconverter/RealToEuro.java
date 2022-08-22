@@ -2,7 +2,7 @@ package converter.currencyconverter;
 
 import java.math.BigDecimal;
 
-public class BrazilianRealToEuroCurrencyConverter extends CurrencyConverterBase {
+public class RealToEuro extends CurrencyConverterBase {
     @Override
     public BigDecimal getBrazilianRealToDestinationCurrencyPriceRatio() {
         return new BigDecimal("0.20");

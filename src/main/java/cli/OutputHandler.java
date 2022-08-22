@@ -1,7 +1,7 @@
 package cli;
 
 import converter.ConversionResult;
-import dependencyinjection.ServiceProvider;
+import dependencyinjection.ServiceFactory;
 
 import java.io.PrintStream;
 import java.math.BigDecimal;
@@ -23,8 +23,8 @@ public class OutputHandler {
 
     private final PrintStream printStream;
 
-    public OutputHandler(ServiceProvider serviceProvider) {
-        this.printStream = serviceProvider.getRequiredService(PrintStream.class);
+    public OutputHandler(ServiceFactory serviceFactory) {
+        this.printStream = serviceFactory.getRequiredService(PrintStream.class);
     }
 
     public void displayInitialInformation() {

@@ -23,10 +23,11 @@ public class InputHandler {
     }
 
     public Either<ConversionOption, Exception> readConversionOption() {
-        var inputted = scanner.nextInt();
         try {
+            var inputted = scanner.nextInt();
             return Either.right(ConversionOption.mapFromInteger(inputted));
         } catch (Exception e) {
+            scanner.next();
             return Either.left(e);
         }
     }

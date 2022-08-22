@@ -2,7 +2,7 @@ package converter.currencyconverter;
 
 import java.math.BigDecimal;
 
-public class BrazilianRealToChileanPesoCurrencyConverter extends CurrencyConverterBase {
+public class RealToChileanPeso extends CurrencyConverterBase {
     @Override
     public BigDecimal getBrazilianRealToDestinationCurrencyPriceRatio() {
         return new BigDecimal("174.17");

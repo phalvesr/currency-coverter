@@ -1,6 +1,7 @@
 package type;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class Either<TRight, TLeft> {
 
@@ -38,11 +39,11 @@ public final class Either<TRight, TLeft> {
         return this.leftValue;
     }
 
-    public void match(Consumer<TRight> rightConsumer, Consumer<TLeft> leftConsumer) {
+    public boolean match(Function<TRight, Boolean> rightConsumer, Function<TLeft, Boolean> leftConsumer) {
         if (isLeft) {
-            leftConsumer.accept(leftValue);
+            return leftConsumer.apply(leftValue);
         } else {
-            rightConsumer.accept(rightValue);
+            return rightConsumer.apply(rightValue);
         }
     }
 }
