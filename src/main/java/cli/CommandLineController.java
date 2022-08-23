@@ -1,9 +1,11 @@
 package cli;
 
+import converter.ConversionRequest;
 import converter.ConversionResult;
 import converter.ConversionWithOperationFeeAndIofHandler;
 import converter.CurrencyConverter;
 import dependencyinjection.ServiceProvider;
+import memory.ConversionMemory;
 import type.Either;
 
 import java.math.BigDecimal;
@@ -15,25 +17,20 @@ public class CommandLineController {
     private final OutputHandler outputHandler;
     private final InputHandler inputHandler;
     private final Map<ConversionOption, CurrencyConverter> converters;
+    private final ConversionMemory memory;
 
     public CommandLineController(ServiceProvider serviceProvider) {
         this.outputHandler = serviceProvider.getRequiredService(OutputHandler.class.getCanonicalName());
         this.inputHandler = serviceProvider.getRequiredService(InputHandler.class);
         this.converters = serviceProvider.getRequiredService("ConverterMap");
+        this.memory = ConversionMemory.getInstance();
+
+        outputHandler.displayGreeting();
     }
 
     public boolean run() {
 
-        outputHandler.displayInitialInformation();
-
-        Either<BigDecimal, Exception> amountOfRealOrException = inputHandler.readAmountOfBrazilianRealToBeConverted(); //.match(amountOfBrazilianRealToBeConverted -> {
-        if (amountOfRealOrException.isLeft()) {
-            outputHandler.displayMessageWithErrorStatus("Valor digitado para conversão é invalido!");
-            return false;
-        }
-
-        BigDecimal amountOfReal = amountOfRealOrException.unsafeGetRight();
-
+        outputHandler.requestConversionOptionsToUser();
         outputHandler.showConversionOptions();
         outputHandler.displayArrow();
 
@@ -48,17 +45,31 @@ public class CommandLineController {
             return false;
         }
 
+        outputHandler.displayMessageRequestingValueToConvert();
+
+        Either<BigDecimal, Exception> amountOfRealOrException = inputHandler.readAmountOfBrazilianRealToBeConverted(); //.match(amountOfBrazilianRealToBeConverted -> {
+        if (amountOfRealOrException.isLeft()) {
+            outputHandler.displayMessageWithErrorStatus("Valor digitado para conversão é invalido!");
+            return false;
+        }
+
+        BigDecimal amountOfReal = amountOfRealOrException.unsafeGetRight();
+
         CurrencyConverter currencyConverter = converters.get(conversionOption);
         ConversionWithOperationFeeAndIofHandler conversionWithOperationFeeAndIofHandler = new ConversionWithOperationFeeAndIofHandler(currencyConverter);
 
-        Optional<ConversionResult> conversionResultOptional = conversionWithOperationFeeAndIofHandler.convertCurrency(amountOfReal);
+        ConversionRequest conversionRequest = new ConversionRequest(amountOfReal, conversionOption);
+        Optional<ConversionResult> conversionResultOptional = conversionWithOperationFeeAndIofHandler.convertCurrency(conversionRequest);
 
         if (conversionResultOptional.isEmpty()) {
             outputHandler.displayMessageWithErrorStatus("Quantidade convertida gera um valor negativo. Não fazemos isso aqui!");
             return true;
         }
 
-        outputHandler.displayConversionResults(conversionResultOptional.get());
+        ConversionResult conversionResult = conversionResultOptional.get();
+        memory.add(conversionResult);
+        outputHandler.displayConversionResults(conversionResult);
+
         return true;
     }
 }

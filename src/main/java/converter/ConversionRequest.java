@@ -12,4 +12,12 @@ public class ConversionRequest {
         this.amountOfBrazilianRealToConvert = amountOfBrazilianRealToConvert;
         this.destinationCurrency = destinationCurrency;
     }
+
+    public BigDecimal getAmountOfBrazilianRealToConvert() {
+        return amountOfBrazilianRealToConvert;
+    }
+
+    public ConversionOption getDestinationCurrency() {
+        return destinationCurrency;
+    }
 }

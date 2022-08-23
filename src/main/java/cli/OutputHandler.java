@@ -27,7 +27,7 @@ public class OutputHandler {
         this.printStream = serviceProvider.getRequiredService(PrintStream.class);
     }
 
-    public void displayInitialInformation() {
+    public void displayMessageRequestingValueToConvert() {
         printStream.format("Digite o valor em reais (R$): ");
     }
 
@@ -49,13 +49,9 @@ public class OutputHandler {
         printStream.format(locale, "Taxa de Operacão  -> R$ %s%n",
                 getFormatBigDecimalToDisplay(conversionResult.getTotalOperationFee()));
         printStream.format("%s%n", "-".repeat(30));
-        printStream.format(locale, "Total convertido  -> %s%n",
+        printStream.format(locale, "Total convertido  -> %s %s%n", ConversionOption.getMonetaryRepresentation(conversionResult.getDestinationCoin()),
                 getFormatBigDecimalToDisplay(conversionResult.getAmountAfterConversionOnDestinationCoin()));
         printStream.println();
-    }
-
-    private BigDecimal getFormatBigDecimalToDisplay(BigDecimal value) {
-        return value.setScale(2, RoundingMode.DOWN);
     }
 
     public void displayArrow() {
@@ -64,5 +60,17 @@ public class OutputHandler {
 
     public void displayMessageWithErrorStatus(String message) {
         printStream.format("%s%s%s%n", ConsoleColors.RED, message, ConsoleColors.RESET);
+    }
+
+    public void displayGreeting() {
+        printStream.format("%s%n%n", "Olá! bem-vindo ao conversor de moedas");
+    }
+
+    private BigDecimal getFormatBigDecimalToDisplay(BigDecimal value) {
+        return value.setScale(2, RoundingMode.DOWN);
+    }
+
+    public void requestConversionOptionsToUser() {
+        printStream.format("%s%n", "Por favor, selecione uma das opções abaixo:");
     }
 }

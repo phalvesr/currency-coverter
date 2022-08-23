@@ -12,7 +12,10 @@ public class ConversionWithOperationFeeAndIofHandler implements CurrencyConverte
     }
 
     @Override
-    public final Optional<ConversionResult> convertCurrency(BigDecimal amountOfBrazilianReal) {
+    public final Optional<ConversionResult> convertCurrency(ConversionRequest conversionRequest) {
+
+        BigDecimal amountOfBrazilianReal = conversionRequest.getAmountOfBrazilianRealToConvert();
+
         BigDecimal operationalFee = currencyConverter.getOperationalFee(amountOfBrazilianReal);
         BigDecimal iofFee = getIofFee(amountOfBrazilianReal);
 
@@ -25,7 +28,10 @@ public class ConversionWithOperationFeeAndIofHandler implements CurrencyConverte
             return Optional.empty();
         }
 
-        return Optional.of(new ConversionResult(amountOfBrazilianReal, iofFee, operationalFee, amountAfterConversionOnDestinationCoin));
+        return Optional.of(
+                new ConversionResult(amountOfBrazilianReal, iofFee, operationalFee,
+                        amountAfterConversionOnDestinationCoin, conversionRequest.getDestinationCurrency())
+        );
     }
 
 

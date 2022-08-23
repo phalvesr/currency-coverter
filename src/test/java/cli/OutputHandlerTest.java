@@ -17,14 +17,14 @@ import static org.mockito.Mockito.*;
 public class OutputHandlerTest {
 
     @Test
-    public void displayInitialInformationPrintsMessageRequestingForTheAmountOfBrazilianRealsThatShouldBeConverted() {
+    public void displayMessageRequestingValueToConvertPrintsMessageRequestingForTheAmountOfBrazilianRealsThatShouldBeConverted() {
 
         PrintStream printStream = mock(PrintStream.class);
         ServiceProvider serviceProvider = mock(ServiceProvider.class);
         when(serviceProvider.getRequiredService(PrintStream.class)).thenReturn(printStream);
 
         OutputHandler sut = new OutputHandler(serviceProvider);
-        sut.displayInitialInformation();
+        sut.displayMessageRequestingValueToConvert();
 
 
         verify(printStream, times(1)).format("Digite o valor em reais (R$): ");
@@ -48,11 +48,12 @@ public class OutputHandlerTest {
         sut.showConversionOptions();
 
 
-        assertEquals(4, conversionOptions.size());
-        verify(printStream, times(1)).format("   %d. %s%n", 1, conversionOptions.get(0));
-        verify(printStream, times(1)).format("   %d. %s%n", 2, conversionOptions.get(1));
-        verify(printStream, times(1)).format("   %d. %s%n", 3, conversionOptions.get(2));
-        verify(printStream, times(1)).format("   %d. %s%n", 4, conversionOptions.get(3));
+        assertEquals(5, conversionOptions.size());
+        verify(printStream, times(1)).format("   %d. %s%n", 0, conversionOptions.get(0));
+        verify(printStream, times(1)).format("   %d. %s%n", 1, conversionOptions.get(1));
+        verify(printStream, times(1)).format("   %d. %s%n", 2, conversionOptions.get(2));
+        verify(printStream, times(1)).format("   %d. %s%n", 3, conversionOptions.get(3));
+        verify(printStream, times(1)).format("   %d. %s%n", 4, conversionOptions.get(4));
     }
 
     @Test
@@ -75,6 +76,7 @@ public class OutputHandlerTest {
         when(conversionResult.getIofFee()).thenReturn(iofFee);
         when(conversionResult.getTotalOperationFee()).thenReturn(totalOperationFee);
         when(conversionResult.getAmountAfterConversionOnDestinationCoin()).thenReturn(amountAfterConversion);
+        when(conversionResult.getDestinationCoin()).thenReturn(ConversionOption.PESO_CHILENO);
 
 
         var sut = new OutputHandler(serviceProvider);
@@ -88,7 +90,9 @@ public class OutputHandlerTest {
                 outputLocale, "Taxa de Operacão  -> R$ %s%n", totalOperationFee.setScale(2, RoundingMode.DOWN));
         verify(printStream, times(1)).format("%s%n", "-".repeat(30));
         verify(printStream, times(1)).format(
-                outputLocale, "Total convertido  -> %s%n", amountAfterConversion.setScale(2, RoundingMode.DOWN));
+                outputLocale, "Total convertido  -> %s %s%n",
+                ConversionOption.getMonetaryRepresentation(ConversionOption.PESO_CHILENO),
+                amountAfterConversion.setScale(2, RoundingMode.DOWN));
         verify(printStream, times(2)).println();
     }
 
@@ -121,5 +125,35 @@ public class OutputHandlerTest {
 
         verify(printStream, times(1)).format("%s%s%s%n",
                 ConsoleColors.RED, invalidOption, ConsoleColors.RESET);
+    }
+
+    @Test
+    public void displayGreetingPrintsHeaderToUserOnTheOutput() {
+        PrintStream printStream = mock(PrintStream.class);
+        ServiceProvider serviceProvider = mock(ServiceProvider.class);
+        when(serviceProvider.getRequiredService(PrintStream.class)).thenReturn(printStream);
+        final String greetingMessage = "Olá! bem-vindo ao conversor de moedas";
+
+
+        OutputHandler sut = new OutputHandler(serviceProvider);
+        sut.displayGreeting();
+
+
+        verify(printStream, times(1)).format("%s%n%n", greetingMessage);
+    }
+
+    @Test
+    public void requestConversionOptionsToUserPrintsMessageToTheUserAskingHimToInputAConversionOptionOnTheOutput() {
+        PrintStream printStream = mock(PrintStream.class);
+        ServiceProvider serviceProvider = mock(ServiceProvider.class);
+        when(serviceProvider.getRequiredService(PrintStream.class)).thenReturn(printStream);
+        final String requestConversionOptionMessage = "Por favor, selecione uma das opções abaixo:";
+
+
+        OutputHandler sut = new OutputHandler(serviceProvider);
+        sut.requestConversionOptionsToUser();
+
+
+        verify(printStream, times(1)).format("%s%n", requestConversionOptionMessage);
     }
 }

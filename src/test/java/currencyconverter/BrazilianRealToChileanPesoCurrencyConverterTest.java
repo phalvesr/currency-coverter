@@ -1,5 +1,7 @@
 package currencyconverter;
 
+import cli.ConversionOption;
+import converter.ConversionRequest;
 import converter.ConversionWithOperationFeeAndIofHandler;
 import converter.currencyconverter.BrazilianRealToChileanPesoCurrencyConverter;
 import org.junit.jupiter.api.Test;
@@ -13,14 +15,16 @@ public class BrazilianRealToChileanPesoCurrencyConverterTest {
 
     @Test
     public void convertCurrencyReturnsExpectedValueForBrazilianRealToChileanPesoConversion() {
-        BrazilianRealToChileanPesoCurrencyConverter brazilianRealToChileanPesoCurrencyConverter =
-                new BrazilianRealToChileanPesoCurrencyConverter();
-        ConversionWithOperationFeeAndIofHandler currencyConverterHandler =
-                new ConversionWithOperationFeeAndIofHandler(brazilianRealToChileanPesoCurrencyConverter);
+        ConversionRequest conversionRequest = new ConversionRequest(new BigDecimal("100.00"), ConversionOption.PESO_CHILENO);
 
-        BigDecimal convertedCurrency = currencyConverterHandler.convertCurrency(new BigDecimal("100.00"))
+
+        BrazilianRealToChileanPesoCurrencyConverter sut = new BrazilianRealToChileanPesoCurrencyConverter();
+        ConversionWithOperationFeeAndIofHandler currencyConverterHandler = new ConversionWithOperationFeeAndIofHandler(sut);
+
+        BigDecimal convertedCurrency = currencyConverterHandler.convertCurrency(conversionRequest)
                 .get().getAmountAfterConversionOnDestinationCoin();
         BigDecimal roundedConvertedCurrency = convertedCurrency.setScale(2, RoundingMode.DOWN);
+
 
         assertEquals(new BigDecimal("15048.28"), roundedConvertedCurrency);
     }

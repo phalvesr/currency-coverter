@@ -4,7 +4,7 @@ public enum ConversionOption {
     NONE {
         @Override
         public String stringValue() {
-            return "None";
+            return "Sair";
         }
 
         @Override
@@ -59,6 +59,16 @@ public enum ConversionOption {
 
     public abstract String stringValue();
     public abstract int intValue();
+    public static String getMonetaryRepresentation(ConversionOption option) {
+        return switch (option) {
+            case NONE -> throw new IllegalArgumentException(option.toString());
+            case EURO -> "EUR";
+            case DOLAR -> "US$";
+            case PESO_ARGENTINO -> "ARS";
+            case PESO_CHILENO -> "CLP";
+        };
+    }
+
     public static ConversionOption mapFromInteger(int value) {
         return ConversionOption.values()[value];
     }

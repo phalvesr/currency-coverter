@@ -1,5 +1,7 @@
 package currencyconverter;
 
+import cli.ConversionOption;
+import converter.ConversionRequest;
 import converter.ConversionWithOperationFeeAndIofHandler;
 import converter.currencyconverter.BrazilianRealToArgentinianPesoCurrencyConverter;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,10 @@ public class BrazilianRealToArgentinianPesoCurrencyConverterTest {
                 new BrazilianRealToArgentinianPesoCurrencyConverter();
         ConversionWithOperationFeeAndIofHandler currencyConverterHandler =
                 new ConversionWithOperationFeeAndIofHandler(brazilianRealToArgentinianPesoCurrencyConverter);
+        ConversionRequest conversionRequest = new ConversionRequest(new BigDecimal("100.00"), ConversionOption.PESO_ARGENTINO);
 
-        BigDecimal convertedCurrency = currencyConverterHandler.convertCurrency(new BigDecimal("100.00"))
+
+        BigDecimal convertedCurrency = currencyConverterHandler.convertCurrency(conversionRequest)
                 .get().getAmountAfterConversionOnDestinationCoin();
         BigDecimal roundedConvertedCurrency = convertedCurrency.setScale(2, RoundingMode.DOWN);
 

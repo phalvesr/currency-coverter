@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConversionOptionTest {
 
     private final List<Field> conventionOptionsUserDeclaredFields;
-    private final int FIELDS_DECLARED_ON_CONVENTION_OPTION_ENUM = 4;
+    private final int FIELDS_DECLARED_ON_CONVENTION_OPTION_ENUM = 5;
 
     public ConversionOptionTest() {
         this.conventionOptionsUserDeclaredFields = Arrays.stream(ConversionOption.class.getDeclaredFields())
@@ -25,10 +25,11 @@ public class ConversionOptionTest {
 
         assertEquals(FIELDS_DECLARED_ON_CONVENTION_OPTION_ENUM, conventionOptionsUserDeclaredFields.size());
         assertAll("Fields",
-            () -> assertEquals("EURO", conventionOptionsUserDeclaredFields.get(0).getName()),
-            () -> assertEquals("DOLAR", conventionOptionsUserDeclaredFields.get(1).getName()),
-            () -> assertEquals("PESO_ARGENTINO", conventionOptionsUserDeclaredFields.get(2).getName()),
-            () -> assertEquals("PESO_CHILENO", conventionOptionsUserDeclaredFields.get(3).getName())
+            () -> assertEquals("NONE", conventionOptionsUserDeclaredFields.get(0).getName()),
+            () -> assertEquals("EURO", conventionOptionsUserDeclaredFields.get(1).getName()),
+            () -> assertEquals("DOLAR", conventionOptionsUserDeclaredFields.get(2).getName()),
+            () -> assertEquals("PESO_ARGENTINO", conventionOptionsUserDeclaredFields.get(3).getName()),
+            () -> assertEquals("PESO_CHILENO", conventionOptionsUserDeclaredFields.get(4).getName())
         );
     }
 
@@ -37,10 +38,11 @@ public class ConversionOptionTest {
 
         assertEquals(FIELDS_DECLARED_ON_CONVENTION_OPTION_ENUM, conventionOptionsUserDeclaredFields.size());
         assertAll(
-            () -> assertEquals("Euro", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(0).getName()).stringValue()),
-            () -> assertEquals("Dólar", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(1).getName()).stringValue()),
-            () -> assertEquals("Peso Argentino", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(2).getName()).stringValue()),
-            () -> assertEquals("Peso Chileno", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(3).getName()).stringValue())
+            () -> assertEquals("Sair", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(0).getName()).stringValue()),
+            () -> assertEquals("Euro", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(1).getName()).stringValue()),
+            () -> assertEquals("Dólar", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(2).getName()).stringValue()),
+            () -> assertEquals("Peso Argentino", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(3).getName()).stringValue()),
+            () -> assertEquals("Peso Chileno", ConversionOption.valueOf(conventionOptionsUserDeclaredFields.get(4).getName()).stringValue())
         );
     }
 }
